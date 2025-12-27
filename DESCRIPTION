@@ -1,4 +1,4 @@
-Package: tidycmprsk
+Package: tidycmprskSc
 Title: Competing Risks Estimation
 Version: 1.1.1.9000
 Authors@R: c(

@@ -1,4 +1,4 @@
 library(testthat)
-library(tidycmprsk)
+library(tidycmprskSc)
 
-test_check("tidycmprsk")
+test_check("tidycmprskSc")
