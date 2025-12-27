@@ -22,7 +22,7 @@ NULL
 # Formula method
 #' @rdname crr
 #' @export
-crr.formula <- function(formula, data, failcode = NULL, conf.level = 0.95, ...) {
+crr.formula <- function(formula, data, failcode = NULL, conf.level = 0.95, cluster = NULL, ...) {
   # checking inputs and assigning the numeric failcode -------------------------
   failcode_numeric <-
     as_numeric_failcode(formula = formula, data = data, failcode = failcode)
@@ -31,7 +31,7 @@ crr.formula <- function(formula, data, failcode = NULL, conf.level = 0.95, ...) 
   processed <- crr_mold(formula, data)
 
   # building model -------------------------------------------------------------
-  crr_bridge(processed, formula, data, failcode_numeric, conf.level = conf.level)
+  crr_bridge(processed, formula, data, failcode_numeric, conf.level = conf.level, cluster = cluster)
 }
 
 crr_mold <- function(formula, data) {
@@ -144,15 +144,16 @@ new_crr <- function(coefs, coef_names, formula, tidy, cmprsk, data,
   )
 }
 
-crr_impl <- function(predictors, outcomes, failcode, conf.level) {
+crr_impl <- function(predictors, outcomes, failcode, conf.level, cluster) {
 
   # function to run crr and summarize with tidy (implementation)
   crr_fit <-
-    cmprsk::crr(
+    crrSC::crrc(
       ftime = outcomes[, 1],
       fstatus = outcomes[, 2],
       cov1 = predictors,
-      failcode = failcode
+      failcode = failcode,
+      cluster = cluster
     )
 
   tidy <- broom::tidy(crr_fit, conf.int = TRUE, conf.level = conf.level)
@@ -168,7 +169,7 @@ crr_impl <- function(predictors, outcomes, failcode, conf.level) {
   )
 }
 
-crr_bridge <- function(processed, formula, data, failcode, conf.level) {
+crr_bridge <- function(processed, formula, data, failcode, conf.level, cluster) {
 
   # function to connect object and implementation
 
@@ -177,7 +178,7 @@ crr_bridge <- function(processed, formula, data, failcode, conf.level) {
   predictors <- as.matrix(processed$predictors)
   outcomes <- as.matrix(processed$outcomes[, 1, drop = TRUE])
 
-  fit <- crr_impl(predictors, outcomes, failcode, conf.level = conf.level)
+  fit <- crr_impl(predictors, outcomes, failcode, conf.level = conf.level, cluster = cluster)
 
   output <-
     new_crr(
