@@ -156,7 +156,7 @@ crr_impl <- function(predictors, outcomes, failcode, conf.level, cluster) {
       cluster = cluster
     )
 
-  tidy <- broom::tidy(crr_fit, conf.int = TRUE, conf.level = conf.level)
+  tidy <- broom::tidy(crr_fit, conf.int = TRUE, conf.level = conf.level, cluster = cluster)
 
   coefs <- tidy$estimate
   coef_names <- tidy$term
